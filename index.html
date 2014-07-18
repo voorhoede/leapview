@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html data-ng-app="leapview" data-ng-controller="ViewCtrl">
+	<head>
+		<title>Leapview</title>
+        <meta charset="utf-8">
+        <link href="leapview.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<h1>{{ title }}</h1>
+		<p>{{ hands.length }} hands</p>
+
+		<table class="data-table">
+			<thead>
+				<tr>
+					<td>ID</td>
+					<td>pos x</td>
+					<td>pos y</td>
+					<td>pos z</td>
+				</tr>
+			</thead>
+			<tbody data-ng-repeat="hand in hands">
+				<tr>
+					<th colspan="4"><h2>hand {{ hand.id }}</h2></td>
+				</tr>
+				<tr>
+					<th>Palm</th>
+					<td>{{ hand.palmPosition.0 | number:0 }}</td>
+					<td>{{ hand.palmPosition.1 | number:0 }}</td>
+					<td>{{ hand.palmPosition.2 | number:0 }}</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="viewport front">
+			<div class="view-sector front-neg-x front-pos-y"></div>
+			<div class="view-sector front-pos-x front-pos-y"></div>
+			<div class="view-sector front-neg-x front-neg-y"></div>
+			<div class="view-sector front-pos-x front-neg-y"></div>
+			<div class="finger" ng-repeat="finger in hands[0].fingers"
+				style="left: {{ finger.tipPosition.0 + frontCenterX }}px; bottom: {{ finger.tipPosition.1 }}px;"></div>
+			<div class="palm"
+				style="left: {{ hands[0].palmPosition.0 + frontCenterX }}px; bottom: {{ hands[0].palmPosition.1 }}px;"></div>
+		</div>
+
+		<script src="//js.leapmotion.com/0.2.0/leap.js"></script>
+		<script src="angular.js"></script>
+		<script src="leapview.js"></script>
+	</body>
+</html>
