@@ -14,6 +14,7 @@
 
 	var FRONT_CENTER_X = 300;
 	var FRONT_CENTER_Y = 400;
+	var video = document.querySelector('[data-video]');
 
 	angular.module('leapview',[])
 		.controller('ViewCtrl', function($scope){
@@ -27,6 +28,31 @@
 				$scope.$apply();
 			};
 
+			var isStopGesture = function(data) {
+				var isStopGesture = false;
+				var hand = data.hands[0];
+				if(hand){
+					if(hand.fingers.length >= 4){
+						isStopGesture = true;
+						var handPalmY = hand.palmPosition[1];
+						hand.fingers.forEach(function(finger){
+							if(finger.stabilizedTipPosition[1] < handPalmY){
+								isStopGesture = false;
+							}
+						});
+					}
+				}
+				return isStopGesture;
+			};
+
+			var handleGesture = function(data){
+				if(isStopGesture(data)){
+					$scope.pause();
+				} else {
+					$scope.play();
+				}
+			};
+
 			var frameNumber = 0;
 			var fps = 5;
 			Leap.loop(function(frame){
@@ -38,8 +64,16 @@
 				if(frameNumber >= 60/fps){
 					frameNumber = 0;
 					updateInfo(frame);
+					handleGesture(frame);
 				}
 			});
+
+			$scope.play = function() {
+				video.play();
+			};
+			$scope.pause = function() {
+				video.pause();
+			};
 		});
 
 
