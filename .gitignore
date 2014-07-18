@@ -1,0 +1,24 @@
+
+# OS
+.DS_Store
+thumbs.db
+
+# Source maps
+# *.js.map
+
+# Editor/IDE files
+*.iml
+*.ipr
+*.iws
+.idea
+*.sublime-workspace
+nb-configuration.xml
+nbactions.xml
+nbproject/private
+
+# Server logs
+log
+logs
+
+# Node
+node_modules
