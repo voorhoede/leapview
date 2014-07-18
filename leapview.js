@@ -23,6 +23,8 @@
 			$scope.frontCenterX = FRONT_CENTER_X;
 			$scope.frontCenterY = FRONT_CENTER_Y;
 
+			var gestureTimeout;
+
 			var updateInfo = function(data){
 				$scope.hands = data.hands;
 				$scope.$apply();
@@ -45,7 +47,38 @@
 				return isStopGesture;
 			};
 
+			var handleCircleGesture = function(data) {
+				var gesture = data.gestures[0];
+				var pointableID = gesture.pointableIds[0];
+				var direction = data.pointable(pointableID).direction;
+				var dotProduct = Leap.vec3.dot(direction, gesture.normal);
+				var isClockwise = (dotProduct > 0);
+				if(gestureTimeout) {
+					clearTimeout(gestureTimeout);
+				}
+				if(isClockwise) {
+					$scope.forward();
+				} else {
+					$scope.rewind();
+				}
+				gestureTimeout = setTimeout(function(){
+					video.playbackRate = 1;
+				}, 200);
+			}
+
 			var handleGesture = function(data){
+				var gesture = data.gestures[0];
+				if(gesture) {
+					switch(gesture.type) {
+						case 'circle':
+							handleCircleGesture(data);
+							break;
+						default:
+							console.info('unhandled gesture', gesture.type);
+							break;
+					}
+					return;
+				}
 				if(isStopGesture(data)){
 					$scope.pause();
 				} else {
@@ -55,11 +88,7 @@
 
 			var frameNumber = 0;
 			var fps = 5;
-			Leap.loop(function(frame){
-				// if(frame.hands){
-				// 	console.log(frame.hands);
-				// 	debugger;
-				// }
+			Leap.loop({ enableGestures: true }, function(frame){
 				frameNumber ++;
 				if(frameNumber >= 60/fps){
 					frameNumber = 0;
@@ -74,6 +103,14 @@
 			$scope.pause = function() {
 				video.pause();
 			};
+			$scope.forward = function() {
+				console.log('ffw');
+				video.playbackRate = 10;
+			}
+			$scope.rewind = function() {
+				console.log('frw');
+				video.playbackRate = -10;
+			}
 		});
 
 

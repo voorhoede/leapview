@@ -54,8 +54,11 @@ td, th { width: 100px; }
 }
 
 .video-player {
-	float: right;
+	float: left;
+}
+.video-player video {
+	width: 600px;
+	height: 400px;
 }
 .video-controls {
-
 }

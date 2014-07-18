@@ -10,7 +10,7 @@
 		<p>{{ hands.length }} hands</p>
 
 		<div class="video-player">
-			<video data-video preload="metadata">
+			<video data-video preload="metadata" loop>
 				<!-- borrowed from: http://html5demos.com/video -->
 				<source src="media/dizzy.mp4" type="video/mp4">
 				<source src="media/dizzy.webm" type="video/webm">
@@ -19,6 +19,8 @@
 			<div class="video-controls">
 				<button data-ng-click="play()">Play</button>
 				<button data-ng-click="pause()">Pause</button>
+				<button data-ng-click="forward()">Forward</button>
+				<button data-ng-click="rewind()">Rewind</button>
 			</div>
 		</div>
 
