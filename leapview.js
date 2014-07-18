@@ -15,15 +15,17 @@
 	var FRONT_CENTER_X = 300;
 	var FRONT_CENTER_Y = 400;
 	var video = document.querySelector('[data-video]');
+	var forwardTimeout;
+	var rewindInterval;
+	var rewindSteps = 0;
 
 	angular.module('leapview',[])
 		.controller('ViewCtrl', function($scope){
 			$scope.title = 'LeapView';
+			$scope.leapMotion = false;
 
 			$scope.frontCenterX = FRONT_CENTER_X;
 			$scope.frontCenterY = FRONT_CENTER_Y;
-
-			var gestureTimeout;
 
 			var updateInfo = function(data){
 				$scope.hands = data.hands;
@@ -53,17 +55,12 @@
 				var direction = data.pointable(pointableID).direction;
 				var dotProduct = Leap.vec3.dot(direction, gesture.normal);
 				var isClockwise = (dotProduct > 0);
-				if(gestureTimeout) {
-					clearTimeout(gestureTimeout);
-				}
+				if(forwardTimeout) { clearTimeout(forwardTimeout); }
 				if(isClockwise) {
 					$scope.forward();
 				} else {
 					$scope.rewind();
 				}
-				gestureTimeout = setTimeout(function(){
-					video.playbackRate = 1;
-				}, 200);
 			}
 
 			var handleGesture = function(data){
@@ -72,17 +69,20 @@
 					switch(gesture.type) {
 						case 'circle':
 							handleCircleGesture(data);
+							return;
 							break;
 						default:
 							console.info('unhandled gesture', gesture.type);
+							return;
 							break;
 					}
-					return;
 				}
 				if(isStopGesture(data)){
 					$scope.pause();
+					return;
 				} else {
 					$scope.play();
+					return;
 				}
 			};
 
@@ -103,30 +103,54 @@
 			$scope.pause = function() {
 				video.pause();
 			};
+
 			$scope.forward = function() {
-				console.log('ffw');
+				console.log('forward');
 				video.playbackRate = 10;
-			}
+				if(rewindInterval) { clearInterval(rewindInterval); }
+				forwardTimeout = setTimeout(function(){
+					video.playbackRate = 1;
+				}, 200);
+			};
+
 			$scope.rewind = function() {
-				console.log('frw');
-				video.playbackRate = -10;
-			}
+				console.log('rewind', rewindInterval);
+				rewindSteps = 0;
+				if(rewindInterval) { clearInterval(rewindInterval); }
+				rewindInterval = setInterval(function(){
+					if(video.currentTime <= 0.1) {
+						video.currentTime = video.duration;
+					}
+					video.currentTime -= .1;
+					rewindSteps++;
+					if(rewindSteps > 50) {
+						clearInterval(rewindInterval);
+						rewindInterval = undefined;
+					}
+				}, 30);
+			};
+
+			controller.on('connect', function() {
+				console.log("Successfully connected.");
+				$scope.leapMotion = true;
+				$scope.apply();
+			});
+
+			controller.on('deviceConnected', function() {
+				console.log("A Leap device has been connected.");
+				$scope.leapMotion = true;
+				$scope.apply();
+			});
+
+			controller.on('deviceDisconnected', function() {
+				console.log("A Leap device has been disconnected.");
+				$scope.leapMotion = false;
+				$scope.apply();
+			});
 		});
 
 
 	var controller = new Leap.Controller();
-
-	controller.on('connect', function() {
-		console.log("Successfully connected.");
-	});
-
-	controller.on('deviceConnected', function() {
-		console.log("A Leap device has been connected.");
-	});
-
-	controller.on('deviceDisconnected', function() {
-		console.log("A Leap device has been disconnected.");
-	});
 
 	controller.connect();
 

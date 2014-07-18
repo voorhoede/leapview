@@ -49,8 +49,23 @@ td, th { width: 100px; }
 	bottom: 0;
 }
 
-.data-table {
+.gesture-details {
 	float: right;
+}
+.gesture-details dt {
+	float: left;
+	clear: left;
+	width: 100px;
+	text-align: right;
+	font-weight: bold;
+	color: green;
+}
+.gesture-details dt:after {
+	content: ":";
+}
+.gesture-details dd {
+	margin: 0 0 0 110px;
+	padding: 0 0 0.5em 0;
 }
 
 .video-player {
@@ -59,6 +74,4 @@ td, th { width: 100px; }
 .video-player video {
 	width: 600px;
 	height: 400px;
-}
-.video-controls {
 }

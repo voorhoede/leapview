@@ -7,6 +7,7 @@
 	</head>
 	<body>
 		<h1>{{ title }}</h1>
+		<p data-ng-if="!leapMotion">You need a connected <a href="https://www.leapmotion.com/">LeapMotion</a> to control this video player using air gestures.</p>
 		<p>{{ hands.length }} hands</p>
 
 		<div class="video-player">
@@ -15,6 +16,7 @@
 				<source src="media/dizzy.mp4" type="video/mp4">
 				<source src="media/dizzy.webm" type="video/webm">
 				<source src="media/dizzy.ogv" type="video/ogg">
+				HTML5 <code>video</code> is required but not supported by your browser.
 			</video>
 			<div class="video-controls">
 				<button data-ng-click="play()">Play</button>
@@ -24,27 +26,37 @@
 			</div>
 		</div>
 
-		<table class="data-table">
-			<thead>
-				<tr>
-					<td>ID</td>
-					<td>pos x</td>
-					<td>pos y</td>
-					<td>pos z</td>
-				</tr>
-			</thead>
-			<tbody data-ng-repeat="hand in hands">
-				<tr>
-					<th colspan="4"><h2>hand {{ hand.id }}</h2></td>
-				</tr>
-				<tr>
-					<th>Palm</th>
-					<td>{{ hand.palmPosition.0 | number:0 }}</td>
-					<td>{{ hand.palmPosition.1 | number:0 }}</td>
-					<td>{{ hand.palmPosition.2 | number:0 }}</td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="gesture-details">
+			<h2>Gestures</h2>
+			<dl>
+				<dt>Stop</dt><dd>Hold up hand with at least four fingers which should all be above the hand palm.</dd>
+				<dt>Play</dt><dd>Any gesture not "Stop".</dd>
+				<dt>Forward</dt><dd><a href="https://developer.leapmotion.com/documentation/javascript/devguide/Leap_Gestures.html#id20">Circle finger</a> clockwise.</dd>
+				<dt>Play</dt><dd><a href="https://developer.leapmotion.com/documentation/javascript/devguide/Leap_Gestures.html#id20">Circle finger</a> counterclockwise.</dd>
+			</dl>
+			<h2>Details</h2>
+			<table class="data-table">
+				<thead>
+					<tr>
+						<td>ID</td>
+						<td>pos x</td>
+						<td>pos y</td>
+						<td>pos z</td>
+					</tr>
+				</thead>
+				<tbody data-ng-repeat="hand in hands">
+					<tr>
+						<th colspan="4"><h2>hand {{ hand.id }}</h2></td>
+					</tr>
+					<tr>
+						<th>Palm</th>
+						<td>{{ hand.palmPosition.0 | number:0 }}</td>
+						<td>{{ hand.palmPosition.1 | number:0 }}</td>
+						<td>{{ hand.palmPosition.2 | number:0 }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 
 		<div class="viewport front">
 			<div class="view-sector front-neg-x front-pos-y"></div>
